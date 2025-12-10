@@ -15,29 +15,32 @@ API REST desarrollada con FastAPI que proporciona un **agente conversacional con
 
 ### ✨ Características Principales
 
-####  Sistema Adaptativo Inteligente
--  **Extracción Automática de Perfil**: El LLM analiza conversaciones y extrae información permanente del usuario (edad, intereses, profesión, etc.)
--  **Adaptación de Personalidad**: El bot se convierte en "igual" del usuario (niño → amigo niño, adulto → colega adulto)
--  **Análisis Emocional**: GPT actúa como psicólogo experto detectando depresión, ansiedad, soledad y ajustando el tono
--  **System Prompt Dinámico**: Se regenera automáticamente cada mensaje basándose en el perfil actualizado
--  **Guardarraíles de Seguridad**: No copia comportamientos autodestructivos, ofrece apoyo emocional cuando detecta angustia
+#### Sistema Adaptativo Inteligente
 
-####  Gestión de Datos
--  **Memoria Persistente**: El agente recuerda todas las conversaciones previas de cada usuario
--  **Multi-Usuario**: Sistema de autenticación con perfiles independientes
--  **Múltiples Sesiones**: Cada usuario puede tener varias conversaciones separadas
--  **Perfiles JSON**: Almacenamiento flexible de perfiles complejos (político, religión, hechos importantes)
+- **Extracción Automática de Perfil**: El LLM analiza conversaciones y extrae información permanente del usuario (edad, intereses, profesión, etc.)
+- **Adaptación de Personalidad**: El bot se convierte en "igual" del usuario (niño → amigo niño, adulto → colega adulto)
+- **Análisis Emocional**: GPT actúa como psicólogo experto detectando depresión, ansiedad, soledad y ajustando el tono
+- **System Prompt Dinámico**: Se regenera automáticamente cada mensaje basándose en el perfil actualizado
+- **Guardarraíles de Seguridad**: No copia comportamientos autodestructivos, ofrece apoyo emocional cuando detecta angustia
 
-####  Interfaz y API
--  **Visualización de Perfil en Tiempo Real**: El frontend muestra el perfil extraído y se actualiza automáticamente
--  **Visor de System Prompt**: Los usuarios pueden ver el prompt personalizado generado para ellos
--  **API REST Completa**: Endpoints documentados con Swagger/OpenAPI
--  **Frontend Interactivo**: Interfaz web moderna en HTML/CSS sin frameworks
--  **Dockerizado**: Imagen lista para desplegar en cualquier entorno
+#### Gestión de Datos
+
+- **Memoria Persistente**: El agente recuerda todas las conversaciones previas de cada usuario
+- **Multi-Usuario**: Sistema de autenticación con perfiles independientes
+- **Múltiples Sesiones**: Cada usuario puede tener varias conversaciones separadas
+- **Perfiles JSON**: Almacenamiento flexible de perfiles complejos (político, religión, hechos importantes)
+
+#### Interfaz y API
+
+- **Visualización de Perfil en Tiempo Real**: El frontend muestra el perfil extraído y se actualiza automáticamente
+- **Visor de System Prompt**: Los usuarios pueden ver el prompt personalizado generado para ellos
+- **API REST Completa**: Endpoints documentados con Swagger/OpenAPI
+- **Frontend Interactivo**: Interfaz web moderna en HTML/CSS sin frameworks
+- **Dockerizado**: Imagen lista para desplegar en cualquier entorno
 
 ---
 
-##  Arquitectura
+## Arquitectura
 
 ```
 ┌─────────────────────────────────┐
@@ -91,7 +94,7 @@ API REST desarrollada con FastAPI que proporciona un **agente conversacional con
 
 ---
 
-##  Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 .
@@ -117,7 +120,7 @@ API REST desarrollada con FastAPI que proporciona un **agente conversacional con
 
 ---
 
-##  Instalación y Uso
+## Instalación y Uso
 
 ### Requisitos Previos
 
@@ -129,12 +132,14 @@ API REST desarrollada con FastAPI que proporciona un **agente conversacional con
 ### Opción 1: Instalación Local
 
 1. **Clonar el repositorio**
+
 ```bash
 git clone <url-del-repositorio>
 cd 2025-12-09_despliegue
 ```
 
 2. **Configurar variables de entorno**
+
 ```bash
 cp .env.example .env
 # Edita .env y añade:
@@ -144,21 +149,25 @@ cp .env.example .env
 ```
 
 3. **Instalar dependencias** (con uv - recomendado)
+
 ```bash
 uv sync
 ```
 
 O con pip:
+
 ```bash
 pip install fastapi uvicorn openai python-dotenv python-multipart requests
 ```
 
 4. **Ejecutar la aplicación**
+
 ```bash
 uvicorn src.main:app --reload
 ```
 
 5. **Acceder a la aplicación**
+
 - Frontend: http://localhost:8000/chat
 - API Docs: http://localhost:8000/docs
 - Landing Page: http://localhost:8000/
@@ -166,17 +175,20 @@ uvicorn src.main:app --reload
 ### Opción 2: Docker
 
 1. **Crear archivo .env**
+
 ```bash
 cp .env.example .env
 # Edita .env y añade tu OPENAI_API_KEY
 ```
 
 2. **Construir la imagen**
+
 ```bash
 docker build -t llm-chat-agent .
 ```
 
 3. **Ejecutar el contenedor**
+
 ```bash
 docker run -d \
   --name chat-agent \
@@ -186,42 +198,45 @@ docker run -d \
 ```
 
 4. **Acceder a la aplicación**
+
 - http://localhost:8000/chat
 
 ### Opción 3: Descargar desde DockerHub
 
 ```bash
 # Descargar la imagen
-docker pull <tu-usuario>/llm-chat-agent:latest
+docker pull cantalaweb/llm-chat-agent:latest
 
 # Ejecutar con tu API key
 docker run -d \
   --name chat-agent \
   -p 8000:8000 \
   -e OPENAI_API_KEY=tu_api_key_aqui \
-  <tu-usuario>/llm-chat-agent:latest
+  cantalaweb/llm-chat-agent:latest
 ```
 
 ---
 
-##  Sistema Adaptativo en Detalle
+## Sistema Adaptativo en Detalle
 
 ### Cómo Funciona la Adaptación
 
 El sistema utiliza un flujo inteligente de 3 etapas:
 
 1. **Extracción de Perfil** (tras CADA mensaje del usuario)
+
    - GPT-5.1 analiza los últimos mensajes buscando información **permanente**
    - Extrae: edad, género, intereses reales, profesión (SOLO si se menciona explícitamente)
    - **Reglas CRÍTICAS**:
-     * Distingue entre "tiene" vs "quiere", evita eventos temporales
-     * NO extrae política/religión a menos que se mencione EXPLÍCITAMENTE
-     * NO duplica ocupación en important_facts si ya está en profession
-     * Limpieza automática de entradas vagas ("Trabaja", "Trabaja como trabajador")
+     - Distingue entre "tiene" vs "quiere", evita eventos temporales
+     - NO extrae política/religión a menos que se mencione EXPLÍCITAMENTE
+     - NO duplica ocupación en important_facts si ya está en profession
+     - Limpieza automática de entradas vagas ("Trabaja", "Trabaja como trabajador")
    - Se fusiona con el perfil existente sin perder información previa
    - **Actualización instantánea**: Si el usuario dice "soy médica", el perfil se actualiza inmediatamente
 
 2. **Análisis Emocional** (cada 7 mensajes)
+
    - GPT-5.1 actúa como **psicólogo clínico experto**
    - Detecta: depresión, ansiedad, soledad, necesidad de apoyo
    - Recomienda modo: normal/friendly/empathetic/supportive/crisis
@@ -237,13 +252,15 @@ El sistema utiliza un flujo inteligente de 3 etapas:
 ### Ejemplo de Adaptación
 
 **Usuario niño (10 años) que juega fútbol-sala:**
+
 ```
 IDENTIDAD: Eres un amigo de tu edad al que le encanta Fútbol-sala.
-TONO: Usa lenguaje SIMPLE y AMIGABLE, emojis 
+TONO: Usa lenguaje SIMPLE y AMIGABLE, emojis
 EXPERTISE: Habla con conocimiento sobre Fútbol-sala, Minecraft
 ```
 
 **Usuario adulto profesional:**
+
 ```
 IDENTIDAD: Eres alguien como tú, que trabaja en Ingeniería de Datos.
 TONO: Natural, equilibrado, profesional pero cercano
@@ -252,18 +269,21 @@ EXPERTISE: Conocimientos técnicos relevantes a su campo
 
 ---
 
-##  API Endpoints
+## API Endpoints
 
 ### Autenticación
 
 #### `POST /api/register`
+
 Registrar un nuevo usuario.
 
 **Body (form-data):**
+
 - `username`: string
 - `password`: string
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -273,13 +293,16 @@ Registrar un nuevo usuario.
 ```
 
 #### `POST /api/login`
+
 Autenticar usuario existente.
 
 **Body (form-data):**
+
 - `username`: string
 - `password`: string
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -291,9 +314,11 @@ Autenticar usuario existente.
 ### Sesiones
 
 #### `GET /api/sessions/{user_id}`
+
 Obtener todas las sesiones de un usuario.
 
 **Response:**
+
 ```json
 {
   "sessions": [
@@ -308,13 +333,16 @@ Obtener todas las sesiones de un usuario.
 ```
 
 #### `POST /api/sessions`
+
 Crear una nueva sesión.
 
 **Body (form-data):**
+
 - `user_id`: int
 - `session_name`: string
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -323,14 +351,17 @@ Crear una nueva sesión.
 ```
 
 #### `DELETE /api/sessions/{session_id}/{user_id}`
+
 Eliminar una sesión y todos sus mensajes.
 
 ### Chat
 
 #### `GET /api/messages/{session_id}`
+
 Obtener todos los mensajes de una sesión.
 
 **Response:**
+
 ```json
 {
   "messages": [
@@ -351,13 +382,16 @@ Obtener todos los mensajes de una sesión.
 ```
 
 #### `POST /api/chat`
+
 Enviar mensaje y obtener respuesta del LLM con system prompt adaptativo.
 
 **Body (form-data):**
+
 - `session_id`: int
 - `message`: string
 
 **Response:**
+
 ```json
 {
   "response": "Esta es la respuesta del agente...",
@@ -371,12 +405,14 @@ Enviar mensaje y obtener respuesta del LLM con system prompt adaptativo.
 }
 ```
 
-### Perfil y Adaptación 
+### Perfil y Adaptación
 
 #### `GET /api/profile/{user_id}`
+
 Obtener el perfil completo del usuario.
 
 **Response:**
+
 ```json
 {
   "profile": {
@@ -409,9 +445,11 @@ Obtener el perfil completo del usuario.
 ```
 
 #### `GET /api/system-prompt/{user_id}`
+
 Obtener el system prompt generado dinámicamente para el usuario.
 
 **Response:**
+
 ```json
 {
   "system_prompt": "IDENTIDAD Y ROL:\nEres un amigo de tu edad al que le encanta Fútbol-sala...",
@@ -425,9 +463,11 @@ Obtener el system prompt generado dinámicamente para el usuario.
 ### Utilidades
 
 #### `GET /health`
+
 Health check del servicio.
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -437,48 +477,52 @@ Health check del servicio.
 
 ---
 
-##  Base de Datos
+## Base de Datos
 
 ### Esquema SQLite
 
 #### Tabla: `users`
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INTEGER PRIMARY KEY | ID único del usuario |
-| username | TEXT UNIQUE | Nombre de usuario |
-| password_hash | TEXT | Hash SHA-256 de la contraseña |
-| created_at | TIMESTAMP | Fecha de creación |
+
+| Campo         | Tipo                | Descripción                   |
+| ------------- | ------------------- | ----------------------------- |
+| id            | INTEGER PRIMARY KEY | ID único del usuario          |
+| username      | TEXT UNIQUE         | Nombre de usuario             |
+| password_hash | TEXT                | Hash SHA-256 de la contraseña |
+| created_at    | TIMESTAMP           | Fecha de creación             |
 
 #### Tabla: `sessions`
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INTEGER PRIMARY KEY | ID único de la sesión |
-| user_id | INTEGER FK | ID del usuario propietario |
-| session_name | TEXT | Nombre de la sesión |
-| created_at | TIMESTAMP | Fecha de creación |
-| updated_at | TIMESTAMP | Última actualización |
+
+| Campo        | Tipo                | Descripción                |
+| ------------ | ------------------- | -------------------------- |
+| id           | INTEGER PRIMARY KEY | ID único de la sesión      |
+| user_id      | INTEGER FK          | ID del usuario propietario |
+| session_name | TEXT                | Nombre de la sesión        |
+| created_at   | TIMESTAMP           | Fecha de creación          |
+| updated_at   | TIMESTAMP           | Última actualización       |
 
 #### Tabla: `messages`
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INTEGER PRIMARY KEY | ID único del mensaje |
-| session_id | INTEGER FK | ID de la sesión |
-| role | TEXT | "user" o "assistant" |
-| content | TEXT | Contenido del mensaje |
-| created_at | TIMESTAMP | Fecha de creación |
 
-#### Tabla: `user_profiles` 
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| user_id | INTEGER PRIMARY KEY FK | ID del usuario |
-| profile_json | TEXT | Perfil completo en JSON (edad, intereses, etc.) |
-| emotional_state_json | TEXT | Estado emocional analizado en JSON |
-| last_updated | TIMESTAMP | Última actualización del perfil |
-| last_emotional_check | TIMESTAMP | Último análisis emocional |
+| Campo      | Tipo                | Descripción           |
+| ---------- | ------------------- | --------------------- |
+| id         | INTEGER PRIMARY KEY | ID único del mensaje  |
+| session_id | INTEGER FK          | ID de la sesión       |
+| role       | TEXT                | "user" o "assistant"  |
+| content    | TEXT                | Contenido del mensaje |
+| created_at | TIMESTAMP           | Fecha de creación     |
+
+#### Tabla: `user_profiles`
+
+| Campo                | Tipo                   | Descripción                                     |
+| -------------------- | ---------------------- | ----------------------------------------------- |
+| user_id              | INTEGER PRIMARY KEY FK | ID del usuario                                  |
+| profile_json         | TEXT                   | Perfil completo en JSON (edad, intereses, etc.) |
+| emotional_state_json | TEXT                   | Estado emocional analizado en JSON              |
+| last_updated         | TIMESTAMP              | Última actualización del perfil                 |
+| last_emotional_check | TIMESTAMP              | Último análisis emocional                       |
 
 ---
 
-##  Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Backend**: FastAPI 0.115+
 - **LLM**: OpenAI GPT-5.1 (modelo con razonamiento adaptativo)
@@ -491,36 +535,39 @@ Health check del servicio.
 
 ---
 
-##  Demostración para Presentación
+## Demostración para Presentación
 
 ### Escenario de Demo (8 minutos)
 
 1. **Intro: Arquitectura Adaptativa** (1 min)
+
    - Mostrar diagrama destacando Profile Service y análisis emocional
    - Explicar flujo: extracción tras CADA mensaje (actualización instantánea), análisis emocional cada 7
 
 2. **Dockerización** (1 min)
+
    - Mostrar Dockerfile multi-stage
    - Ejecutar contenedor
    - Verificar acceso en localhost:8000/chat
 
 3. ** Demo Adaptación de Personalidad** (5 min) - **MOMENTO WOW**
+
    - Registrar como "Niño de 10 años"
    - Conversación inicial:
-     * "Hola, tengo 10 años y me encanta el fútbol-sala. Juego en mi equipo del cole"
-     * **INMEDIATAMENTE** después del primer mensaje: Indicador verde en "Tu Perfil Adaptativo"
-     * Hacer clic en "Tu Perfil Adaptativo" en sidebar
-     * **Mostrar perfil extraído AUTOMÁTICAMENTE EN TIEMPO REAL**: edad ~10 años, interés en fútbol-sala
-     * Hacer clic en " Ver System Prompt"
-     * **Mostrar cómo el bot se convirtió en "amigo de su edad" INSTANTÁNEAMENTE**
+     - "Hola, tengo 10 años y me encanta el fútbol-sala. Juego en mi equipo del cole"
+     - **INMEDIATAMENTE** después del primer mensaje: Indicador verde en "Tu Perfil Adaptativo"
+     - Hacer clic en "Tu Perfil Adaptativo" en sidebar
+     - **Mostrar perfil extraído AUTOMÁTICAMENTE EN TIEMPO REAL**: edad ~10 años, interés en fútbol-sala
+     - Hacer clic en " Ver System Prompt"
+     - **Mostrar cómo el bot se convirtió en "amigo de su edad" INSTANTÁNEAMENTE**
    - Continuar conversación:
-     * El bot ahora habla como niño, pregunta sobre fútbol
-     * **Demostrar que la personalidad cambió dinámicamente**
+     - El bot ahora habla como niño, pregunta sobre fútbol
+     - **Demostrar que la personalidad cambió dinámicamente**
    - Crear nueva sesión como adulto profesional:
-     * "Soy ingeniero de datos, trabajo con Python y Spark"
-     * **ACTUALIZACIÓN INSTANTÁNEA** del perfil tras el mensaje
-     * Observar cómo cambia completamente el tono
-     * Ver perfil actualizado (profesión, tono profesional) EN TIEMPO REAL
+     - "Soy ingeniero de datos, trabajo con Python y Spark"
+     - **ACTUALIZACIÓN INSTANTÁNEA** del perfil tras el mensaje
+     - Observar cómo cambia completamente el tono
+     - Ver perfil actualizado (profesión, tono profesional) EN TIEMPO REAL
 
 4. **Endpoints y BD** (1 min)
    - Swagger: mostrar `/api/profile/{user_id}` y `/api/system-prompt/{user_id}`
@@ -530,6 +577,7 @@ Health check del servicio.
 ### Scripts de Ejemplo con Adaptación
 
 **Demo 1: Niño adaptativo**
+
 ```
 [Mensaje 1]
 Usuario: Hola, tengo 10 años y me gusta Minecraft
@@ -555,6 +603,7 @@ Bot: ¡Genial!  Yo también me encanta el fútbol-sala...
 ```
 
 **Demo 2: Profesional adaptativo**
+
 ```
 [Mensaje 1]
 Usuario: Soy ingeniera de datos, trabajo con Python y Spark
@@ -578,28 +627,30 @@ EXPERTISE: Habla con conocimiento sobre Python, Spark"
 
 ---
 
-##  Extras Implementados
+## Extras Implementados
 
 ### Requisitos Base
--  **Sin Pydantic**: Validación manual con diccionarios
--  **Base de Datos**: SQLite con esquema completo + tabla de perfiles
--  **Dockerización**: Imagen multi-stage lista para DockerHub
--  **Frontend**: HTML/CSS/JS sin frameworks (con visualización avanzada)
--  **Documentación**: README completo + Swagger + QUICKSTART
 
-### Features Avanzadas 
--  **Sistema de IA Adaptativa**: Extracción automática de perfiles usando GPT-5.1
--  **Análisis Emocional Inteligente**: LLM actúa como psicólogo clínico experto
--  **System Prompts Dinámicos**: Regenerados automáticamente por mensaje
--  **Adaptación de Personalidad**: Bot se convierte en "igual" del usuario
--  **Guardarraíles de Seguridad**: Detección de riesgo emocional y apoyo
--  **Visualización en Tiempo Real**: Frontend muestra perfil y permite ver system prompt
--  **Integración NewsAPI**: Para saludos proactivos (preparado)
--  **Perfiles Complejos**: Incluye político, religión, hechos importantes, temas sensibles
+- **Sin Pydantic**: Validación manual con diccionarios
+- **Base de Datos**: SQLite con esquema completo + tabla de perfiles
+- **Dockerización**: Imagen multi-stage lista para DockerHub
+- **Frontend**: HTML/CSS/JS sin frameworks (con visualización avanzada)
+- **Documentación**: README completo + Swagger + QUICKSTART
+
+### Features Avanzadas
+
+- **Sistema de IA Adaptativa**: Extracción automática de perfiles usando GPT-5.1
+- **Análisis Emocional Inteligente**: LLM actúa como psicólogo clínico experto
+- **System Prompts Dinámicos**: Regenerados automáticamente por mensaje
+- **Adaptación de Personalidad**: Bot se convierte en "igual" del usuario
+- **Guardarraíles de Seguridad**: Detección de riesgo emocional y apoyo
+- **Visualización en Tiempo Real**: Frontend muestra perfil y permite ver system prompt
+- **Integración NewsAPI**: Para saludos proactivos (preparado)
+- **Perfiles Complejos**: Incluye político, religión, hechos importantes, temas sensibles
 
 ---
 
-##  Seguridad
+## Seguridad
 
 - Contraseñas hasheadas con SHA-256
 - Variables de entorno para API keys
@@ -608,13 +659,13 @@ EXPERTISE: Habla con conocimiento sobre Python, Spark"
 
 ---
 
-##  Soporte
+## Soporte
 
 Para dudas o problemas, consultar la documentación de Swagger en `/docs` cuando la aplicación esté corriendo.
 
 ---
 
-##  Licencia
+## Licencia
 
 Este proyecto fue desarrollado como parte de un ejercicio académico de Data Engineering.
 
