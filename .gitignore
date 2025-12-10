@@ -60,6 +60,7 @@ cover/
 # Extras
 .env
 planning
+.claude
 
 # Database files
 *.db

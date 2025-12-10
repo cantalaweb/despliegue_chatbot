@@ -1,5 +1,5 @@
 # Multi-stage build for smaller image size
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -32,6 +32,7 @@ RUN mkdir -p /app/data
 # Set environment variables
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH="/app/src:$PYTHONPATH"
 
 # Expose port
 EXPOSE 8000

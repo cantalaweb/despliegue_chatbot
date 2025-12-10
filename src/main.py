@@ -2,18 +2,16 @@
 FastAPI application for Adaptive LLM Chat Agent.
 """
 
-import os
-from typing import Dict, Any
-from datetime import datetime
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
-from database import Database
-from llm_service import LLMService
-from profile_service import ProfileService
-from news_service import NewsService
+from .database import Database
+from .llm_service import LLMService
+from .profile_service import ProfileService
+from .news_service import NewsService
 
 load_dotenv()
 
@@ -29,7 +27,11 @@ llm_service = LLMService()
 profile_service = ProfileService(llm_service)
 news_service = NewsService()
 
-app.mount("/static", StaticFiles(directory="../static"), name="static")
+# Resolve static directory relative to this file (works in Docker and local)
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Track messages per session for profile updates
 message_counters = {}
@@ -198,7 +200,7 @@ async def delete_session(session_id: int, user_id: int):
 
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_interface():
-    with open("../static/chat.html", "r", encoding="utf-8") as f:
+    with open(STATIC_DIR / "chat.html", "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
 
 

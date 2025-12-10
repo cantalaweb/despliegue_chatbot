@@ -86,8 +86,7 @@ elif [ "$MODE" == "local" ]; then
 
     echo "🚀 Iniciando servidor..."
     echo ""
-    cd src
-    ../.venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    ./.venv/bin/uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 else
     echo "❌ Modo no válido: $MODE"

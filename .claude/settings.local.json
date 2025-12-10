@@ -8,7 +8,11 @@
       "Bash(chmod:*)",
       "Bash(curl:*)",
       "Bash(pkill:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(docker logs:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker build:*)",
+      "Bash(docker run:*)"
     ],
     "deny": [],
     "ask": []

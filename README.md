@@ -155,8 +155,7 @@ pip install fastapi uvicorn openai python-dotenv python-multipart requests
 
 4. **Ejecutar la aplicación**
 ```bash
-cd src
-uvicorn main:app --reload
+uvicorn src.main:app --reload
 ```
 
 5. **Acceder a la aplicación**
