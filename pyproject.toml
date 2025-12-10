@@ -1,0 +1,24 @@
+[project]
+name = "2025-12-09-despliegue"
+version = "0.1.0"
+description = "Agente Conversacional LLM con Memoria Persistente Multi-Usuario"
+readme = "README.md"
+requires-python = ">=3.11.9"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "openai>=1.54.0",
+    "python-dotenv>=1.0.1",
+    "python-multipart>=0.0.12",
+    "requests>=2.31.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.1.0",
+    "pytest>=9.0.2",
+    "ruff>=0.14.8",
+]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
